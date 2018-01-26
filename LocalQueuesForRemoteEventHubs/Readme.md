@@ -16,7 +16,7 @@ Intent
 
 A web application will be able to publish to either Queue (local) or 
 EventHubs (cloud). A corresponding trigger will pick up the event and
-process it thrgouh some set of handlers that are wired to handle that 
+process it through some set of handlers that are wired to handle that 
 type of event.
 
 Locally, for test purposes, there is also a HttpTrigger to publish
@@ -33,7 +33,8 @@ Dependencies:
 * [Azure Storage Emulator: 5.3 works, 5.1 doesn't](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator)
 
 From command-line: `func start`
+
 From command-line 2: 
 
-* curl: `curl --request POST -H "Content-Type:application/json" --data '{"input":"sample queue data"}' http://localhost:7071/api/PublishSampleQueueEvents`
-* PoSH: `Invoke-WebRequest -Method POST -H @{"Content-Type" = "application/json"} -Body @{"input"="sample queue data"} http://localhost:7071/api/PublishSampleQueueEvents`
+* curl: `curl --request POST --data " " http://localhost:7071/api/PublishSampleQueueEvents`
+* PoSH: `Invoke-WebRequest -Method POST http://localhost:7071/api/PublishSampleQueueEvents`

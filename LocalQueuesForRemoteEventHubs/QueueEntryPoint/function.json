@@ -2,7 +2,7 @@
   "disabled": false,
   "bindings": [
     {
-      "name": "myQueueItem",
+      "name": "serializedItem",
       "type": "queueTrigger",
       "direction": "in",
       "queueName": "local-events",

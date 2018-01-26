@@ -1,6 +1,14 @@
-using System;
+#r "Newtonsoft.Json"
+#r "../Common.dll"
 
-public static void Run(string myQueueItem, TraceWriter log)
+using System;
+using Newtonsoft.Json;
+using Common;
+using Common.Events;
+
+public static void Run(Envelope serializedItem, TraceWriter log)
 {
-    log.Info($"C# Queue trigger function processed: {myQueueItem}");
+    var eventDesc = JsonConvert.SerializeObject(serializedItem);
+    log.Info($"C# Queue trigger function processed: [{serializedItem.GetType().Name} '{eventDesc}'] from {serializedItem}");
 }
+
