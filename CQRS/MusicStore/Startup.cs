@@ -55,6 +55,19 @@ namespace MusicStore
                     .AddEntityFrameworkStores<MusicStoreContext>()
                     .AddDefaultTokenProviders();
 
+            // Apply better settings (NIST says so)
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
+            });
+
             services.ConfigureApplicationCookie(options => options.AccessDeniedPath = "/Home/AccessDenied");
 
             services.AddCors(options =>
@@ -92,42 +105,43 @@ namespace MusicStore
             });
 
 
-            services.AddAuthentication()
-                .AddFacebook(options =>
-            {
-                options.AppId = "550624398330273";
-                options.AppSecret = "10e56a291d6b618da61b1e0dae3a8954";
-            })
-                .AddGoogle(options =>
-            {
-                options.ClientId = "995291875932-0rt7417v5baevqrno24kv332b7d6d30a.apps.googleusercontent.com";
-                options.ClientSecret = "J_AT57H5KH_ItmMdu0r6PfXm";
-            })
-                .AddTwitter(options =>
-            {
-                options.ConsumerKey = "lDSPIu480ocnXYZ9DumGCDw37";
-                options.ConsumerSecret = "fpo0oWRNc3vsZKlZSq1PyOSoeXlJd7NnG4Rfc94xbFXsdcc3nH";
-            })
-            // The MicrosoftAccount service has restrictions that prevent the use of
-            // http://localhost:5001/ for test applications.
-            // As such, here is how to change this sample to uses http://ktesting.com:5001/ instead.
+            services.AddAuthentication();
+            //services.AddAuthentication()
+            //    .AddFacebook(options =>
+            //{
+            //    options.AppId = "550624398330273";
+            //    options.AppSecret = "10e56a291d6b618da61b1e0dae3a8954";
+            //})
+            //    .AddGoogle(options =>
+            //{
+            //    options.ClientId = "995291875932-0rt7417v5baevqrno24kv332b7d6d30a.apps.googleusercontent.com";
+            //    options.ClientSecret = "J_AT57H5KH_ItmMdu0r6PfXm";
+            //})
+            //    .AddTwitter(options =>
+            //{
+            //    options.ConsumerKey = "lDSPIu480ocnXYZ9DumGCDw37";
+            //    options.ConsumerSecret = "fpo0oWRNc3vsZKlZSq1PyOSoeXlJd7NnG4Rfc94xbFXsdcc3nH";
+            //})
+            //// The MicrosoftAccount service has restrictions that prevent the use of
+            //// http://localhost:5001/ for test applications.
+            //// As such, here is how to change this sample to uses http://ktesting.com:5001/ instead.
 
-            // From an admin command console first enter:
-            // notepad C:\Windows\System32\drivers\etc\hosts
-            // and add this to the file, save, and exit (and reboot?):
-            // 127.0.0.1 ktesting.com
+            //// From an admin command console first enter:
+            //// notepad C:\Windows\System32\drivers\etc\hosts
+            //// and add this to the file, save, and exit (and reboot?):
+            //// 127.0.0.1 ktesting.com
 
-            // Then you can choose to run the app as admin (see below) or add the following ACL as admin:
-            // netsh http add urlacl url=http://ktesting:5001/ user=[domain\user]
+            //// Then you can choose to run the app as admin (see below) or add the following ACL as admin:
+            //// netsh http add urlacl url=http://ktesting:5001/ user=[domain\user]
 
-            // The sample app can then be run via:
-            // dnx . web
-                .AddMicrosoftAccount(options =>
-            {
-                // MicrosoftAccount requires project changes
-                options.ClientId = "000000004012C08A";
-                options.ClientSecret = "GaMQ2hCnqAC6EcDLnXsAeBVIJOLmeutL";
-            });
+            //// The sample app can then be run via:
+            //// dnx . web
+            //    .AddMicrosoftAccount(options =>
+            //{
+            //    // MicrosoftAccount requires project changes
+            //    options.ClientId = "000000004012C08A";
+            //    options.ClientSecret = "GaMQ2hCnqAC6EcDLnXsAeBVIJOLmeutL";
+            //});
         }
 
         //This method is invoked when ASPNETCORE_ENVIRONMENT is 'Development' or is not defined
