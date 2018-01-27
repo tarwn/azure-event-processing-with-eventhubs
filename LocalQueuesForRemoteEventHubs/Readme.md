@@ -93,10 +93,9 @@ Example:
     * When OrderFilled is received, updates DB
     * When OrderFilled is received, send email confirmation to user
 
-```
-    +--------------------+
-    |      User          |
-    +--------------------+
+```    
+           (Users)
+    
         ^           |
         | Browse    | Place Order
         |           |
