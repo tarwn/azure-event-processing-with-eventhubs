@@ -5,23 +5,58 @@ EventHubs does not have an Emulator you can run locally, so I'm creating
 a method to use a single queue/function locally for event processing with
 a QueueTrigger and an EventHubs function for the remote (Azure) version.
 
+_Funny Story: Using a Queue instead of EventHubs sort of makes sense...
+for about 3 seconds, then you start thinking about multiple consumers
+and such and realize it totally won't work, update coming..._
+
 You could set up a development EventHubs instance in Azure, but it far
 less flexible then a local emulation environment (line latency, version
 differences as you switch branches and have mixed events in the stream
 still, setting up and clearing the environment, hacking on something
 when the power is out, etc).
 
+_Well, darnit. I may be about to write an offline emulator for EventHubs_
+
 Intent
 -------------
 
-A web application will be able to publish to either Queue (local) or 
-EventHubs (cloud). A corresponding trigger will pick up the event and
-process it through some set of handlers that are wired to handle that 
-type of event.
+Integrate multiple systems via event pipelines. Using an event pipeline
+decouples the systems which would normally be more tightly coupled with
+service calls/schemas. You still need a common language for Events, but
+you should be able to power cycle the services every few minutes, test
+drive new versions of systems, and all sorts of things with this model.
 
-Locally, for test purposes, there is also a HttpTrigger to publish
-test events onto the queue. This will be replaced by a sample web 
-application (potentially a different iteration).
+Azure Functions will be used as the consumers to consume events and
+process them through handler logic. Each "system" integration would
+consist of a consumer function to process events into the system. For
+sake of an easy sample, I'm also going to create an HTTP function for each
+to serve as the "system" and publish events into the pipeline.
+
+Still evolving.
+
+```
+        (Users)                      (Users)
+
+          + ^    Direct                 ^    Timely
+          | |  Interaction!             | Communication!
+          v +                           +
+   +----------------+           +---------------+
+   |  Your System!  |           |  Functions!   |
+   |----------------|           |---------------|
+   |                |           |               |
+   |                |           |               |
+   |                | <-------+ |               |
+   |                |  Updates  |               |
+   |                |           |               |
+   +----------------+           +---------------+
+           +                           ^
+           | Events                    | Events
+           |                           |
+           v                           +
+        ===================================
+               Event Pipeline   +----->
+        ===================================
+```
 
 How to run
 -------------
@@ -59,35 +94,34 @@ Example:
     * When OrderFilled is received, send email confirmation to user
 
 ```
-
-      +--------------------+
-      |      User          |
-      +--------------------+
-           ^           |
-           | Browse    | Place Order
-           |           |
-           |           |
-           |           v
-      +-----------------------------------------------+
-      |                                               |
-      |               Store Website + DB              |
-      |                                               |
-      +-----------------------------------------------+
-         ^             |                   ^
-         | Update      | OrderPlaced       | Update DB,
-         |   DB        |                   | Send Email
-         |             v                   |
-      +----------------------------------------------->
-        O   Event Log  O                  O
-      +----------------------------------------------->
-        ^                     |           ^
-        | InventoryAdjusted   | Fill it?  | OrderFilled
-        |                     v           |
-      +-----------------------------------------------+
-      |                                               |
-      |               Inventory System                |
-      |                                               |
-      +-----------------------------------------------+
+    +--------------------+
+    |      User          |
+    +--------------------+
+        ^           |
+        | Browse    | Place Order
+        |           |
+        |           |
+        |           v
+    +-----------------------------------------------+
+    |                                               |
+    |               Store Website + DB              |
+    |                                               |
+    +-----------------------------------------------+
+        ^             |                   ^
+        | Update      | OrderPlaced       | Update DB,
+        |   DB        |                   | Send Email
+        |             v                   |
+    +----------------------------------------------->
+    O   Event Log  O                  O
+    +----------------------------------------------->
+    ^                     |           ^
+    | InventoryAdjusted   | Fill it?  | OrderFilled
+    |                     v           |
+    +-----------------------------------------------+
+    |                                               |
+    |               Inventory System                |
+    |                                               |
+    +-----------------------------------------------+
 ```
 
 Now it's easy to add in logic for things like partial order 
