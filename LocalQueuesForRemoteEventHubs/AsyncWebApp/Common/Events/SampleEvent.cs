@@ -11,7 +11,7 @@ namespace Common.Events
         public SampleEvent() { }
 
         public SampleEvent(string name)
-            : base("Common.Events.SampleEvent")
+            : base()
         {
             Name = name;
         }

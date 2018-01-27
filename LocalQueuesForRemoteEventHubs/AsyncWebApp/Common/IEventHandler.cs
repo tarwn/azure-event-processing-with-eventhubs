@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public interface IEventHandler<T>
+    public interface IEventHandler<T> : IEventHandlerBase
         where T : EventBase
     {
-        Task WhenAsync(T[] events);
+        Task WhenAsync(T events);
     }
+
+    public interface IEventHandlerBase
+    { }
 }

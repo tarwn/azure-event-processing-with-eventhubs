@@ -8,11 +8,9 @@ namespace Common.Handlers
 {
     public class SampleHandler : IEventHandler<SampleEvent>
     {
-        public async Task WhenAsync(SampleEvent[] events)
+        public async Task WhenAsync(SampleEvent evt)
         {
-            foreach(var e in events) {
-                Console.WriteLine($"Processing event {e.EventType} with name '{e.Name}'");
-            }
+            Console.WriteLine($"Processing event {evt.GetType().Name} with name '{evt.Name}'");
 
             await Task.CompletedTask;
         }
