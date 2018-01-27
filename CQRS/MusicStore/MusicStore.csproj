@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <Description>Music store application on ASP.NET Core</Description>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <DefineConstants>$(DefineConstants);DEMO</DefineConstants>
+    <MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RuntimeIdentifiers Condition="'$(Configuration)' != 'RuntimeStore'">win7-x86;win7-x64;linux-x64;osx-x64</RuntimeIdentifiers>
+    <Configurations>Debug;Release;RuntimeStore</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="ForTesting\**\*" CopyToPublishDirectory="Never" Condition=" '$(PublishForTesting)' != 'true' " />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)'=='.NETCoreApp' AND '$(Configuration)' == 'RuntimeStore' ">
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="$(MicrosoftAspNetCoreAllPackageVersion)" />
+  </ItemGroup>
+
+
+</Project>
