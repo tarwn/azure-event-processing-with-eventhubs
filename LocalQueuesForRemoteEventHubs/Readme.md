@@ -38,3 +38,59 @@ From command-line 2:
 
 * curl: `curl --request POST --data " " http://localhost:7071/api/PublishSampleQueueEvents`
 * PoSH: `Invoke-WebRequest -Method POST http://localhost:7071/api/PublishSampleQueueEvents`
+
+Design Thinking
+------------------
+
+The Async Web App manages it's own data, but publishes events that it's backend or other systems may need to know.
+
+The Common Language (basic dispatch logic, contracts, and global list of events) lives in 
+the Common.dll assembly. Consumers can each have their own DLL full of handlers specific
+to their business domain.
+
+Example:
+
+* Inventory System
+    * When inventory is received, publishes InventoryAdjustment
+    * When an OrderPlaced event is received, it attempts to fill it and publishes OrderFilled
+* Website
+    * When a user places an order, publishes OrderPlaced
+    * When OrderFilled is received, updates DB
+    * When OrderFilled is received, send email confirmation to user
+
+```
+
+      +--------------------+
+      |      User          |
+      +--------------------+
+           ^           |
+           | Browse    | Place Order
+           |           |
+           |           |
+           |           v
+      +-----------------------------------------------+
+      |                                               |
+      |               Store Website + DB              |
+      |                                               |
+      +-----------------------------------------------+
+         ^             |                   ^
+         | Update      | OrderPlaced       | Update DB,
+         |   DB        |                   | Send Email
+         |             v                   |
+      +----------------------------------------------->
+        O   Event Log  O                  O
+      +----------------------------------------------->
+        ^                     |           ^
+        | InventoryAdjusted   | Fill it?  | OrderFilled
+        |                     v           |
+      +-----------------------------------------------+
+      |                                               |
+      |               Inventory System                |
+      |                                               |
+      +-----------------------------------------------+
+```
+
+Now it's easy to add in logic for things like partial order 
+fulfillment, split shipments, and accounting system with
+associated events, and so on. And they can reboot every 5 minutes
+without really affecting each other.

@@ -12,9 +12,21 @@ namespace Common.Dispatch
     {
         private Dictionary<Type, List<EventHandlerWrapper>> _registeredHandlers;
 
+        public EventDispatcher()
+            : this(new [] { Assembly.GetAssembly(typeof(EventDispatcher)) })
+        { }
+
         public EventDispatcher(Assembly[] assemblies)
         {
             _registeredHandlers = GetHandlersForRegistration(assemblies);
+        }
+
+        public static EventDispatcher ForAssembliesFromTypes(Type[] types)
+        {
+            var assemblies = types.Select(t => Assembly.GetAssembly(t))
+                                  .Distinct()
+                                  .ToArray();
+            return new EventDispatcher(assemblies);
         }
 
         public static Dictionary<Type, List<EventHandlerWrapper>> GetHandlersForRegistration(Assembly[] assemblies)
